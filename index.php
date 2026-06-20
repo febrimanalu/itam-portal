@@ -1,163 +1,125 @@
 <?php
-$pageTitle = "ITAM Portal Dashboard";
-?>
+$pageTitle = 'ITAM Portal Dashboard';
+require __DIR__ . '/modules/data/sample_data.php';
 
+$navigation = [
+    ['label' => 'Dashboard', 'href' => 'index.php'],
+    ['label' => 'Hardware Inventory', 'href' => 'pages/hardware.php'],
+    ['label' => 'Endpoint Inventory', 'href' => 'pages/endpoints.php'],
+    ['label' => 'Software Inventory', 'href' => 'pages/software.php'],
+    ['label' => 'License Management', 'href' => 'pages/licenses.php'],
+    ['label' => 'Contract Repository', 'href' => 'pages/contracts.php'],
+    ['label' => 'Copier Machine Repository', 'href' => 'pages/copiers.php'],
+    ['label' => 'Network Line Repository', 'href' => 'pages/network-lines.php'],
+    ['label' => 'Reports', 'href' => 'pages/reports.php'],
+    ['label' => 'Administration', 'href' => 'pages/administration.php'],
+];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?= $pageTitle ?></title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-        }
-        .sidebar {
-            width: 240px;
-            height: 100vh;
-            background: #1f2937;
-            color: white;
-            position: fixed;
-            padding: 20px;
-        }
-        .sidebar h2 {
-            font-size: 20px;
-            margin-bottom: 30px;
-        }
-        .sidebar a {
-            display: block;
-            color: #d1d5db;
-            text-decoration: none;
-            margin: 15px 0;
-        }
-        .main {
-            margin-left: 280px;
-            padding: 30px;
-        }
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
-        .card h3 {
-            margin: 0;
-            color: #6b7280;
-            font-size: 14px;
-        }
-        .card p {
-            font-size: 30px;
-            font-weight: bold;
-            margin: 10px 0 0;
-        }
-        .section {
-            margin-top: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-            text-align: left;
-        }
-        th {
-            background: #f9fafb;
-        }
-        .badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-        .green { background: #dcfce7; color: #166534; }
-        .red { background: #fee2e2; color: #991b1b; }
-        .yellow { background: #fef9c3; color: #854d0e; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-mark">IT</span>
+            <div>
+                <strong>ITAM Portal</strong>
+                <small>Assets & Endpoints</small>
+            </div>
+        </div>
+        <nav class="nav-menu" aria-label="Primary navigation">
+            <?php foreach ($navigation as $item): ?>
+                <a class="<?= $item['label'] === 'Dashboard' ? 'active' : '' ?>" href="<?= htmlspecialchars($item['href']) ?>"><?= htmlspecialchars($item['label']) ?></a>
+            <?php endforeach; ?>
+        </nav>
+    </aside>
 
-<div class="sidebar">
-    <h2>ITAM Portal</h2>
-    <a href="#">Dashboard</a>
-    <a href="#">Hardware Assets</a>
-    <a href="#">Endpoint Details</a>
-    <a href="#">Software Inventory</a>
-    <a href="#">Contracts</a>
-    <a href="#">Network Repository</a>
-    <a href="#">Reports</a>
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Executive Overview</p>
+                <h1>IT Asset & Endpoint Management Dashboard</h1>
+                <p>Centralized visibility across hardware, endpoints, software, licenses, copier contracts, network lines, and future PDQ Connect telemetry.</p>
+            </div>
+            <div class="header-actions">
+                <button type="button">Export Report</button>
+                <button type="button" class="primary">Sync Inventory</button>
+            </div>
+        </header>
+
+        <section class="metric-grid" aria-label="Dashboard metrics">
+            <?php foreach ($metrics as $metric): ?>
+                <article class="metric-card <?= htmlspecialchars($metric['tone']) ?>">
+                    <span><?= htmlspecialchars($metric['label']) ?></span>
+                    <strong><?= htmlspecialchars($metric['value']) ?></strong>
+                    <small><?= htmlspecialchars($metric['trend']) ?></small>
+                </article>
+            <?php endforeach; ?>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="panel span-2">
+                <div class="panel-header"><h2>Contract Expiration</h2><span>Next 120 days</span></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Type</th><th>Name</th><th>Location</th><th>Expiration</th><th>Status</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($contractExpirations as $row): ?>
+                            <tr><td><?= htmlspecialchars($row['type']) ?></td><td><?= htmlspecialchars($row['name']) ?></td><td><?= htmlspecialchars($row['location']) ?></td><td><?= htmlspecialchars($row['date']) ?></td><td><span class="badge warning"><?= htmlspecialchars($row['status']) ?></span></td></tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header"><h2>Endpoint Health Summary</h2><span>Live estate</span></div>
+                <?php foreach ($health as $item): ?>
+                    <div class="health-row">
+                        <div><strong><?= htmlspecialchars($item['label']) ?></strong><small><?= htmlspecialchars((string) $item['count']) ?> devices</small></div>
+                        <div class="progress"><span class="<?= htmlspecialchars($item['class']) ?>" style="width: <?= (int) $item['percent'] ?>%"></span></div>
+                    </div>
+                <?php endforeach; ?>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header"><h2>Warranty Expiration</h2><span>Priority assets</span></div>
+                <ul class="list-stack">
+                    <?php foreach ($warranties as $item): ?>
+                        <li><strong><?= htmlspecialchars($item['asset']) ?></strong><span><?= htmlspecialchars($item['tag']) ?> · <?= htmlspecialchars($item['expires']) ?></span><small><?= htmlspecialchars($item['location']) ?></small></li>
+                    <?php endforeach; ?>
+                </ul>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header"><h2>Asset Distribution by Location</h2><span>Combined yard/building/PIC</span></div>
+                <?php foreach ($locations as $location): ?>
+                    <div class="distribution-row"><span><?= htmlspecialchars($location['name']) ?></span><strong><?= (int) $location['assets'] ?></strong></div>
+                <?php endforeach; ?>
+            </article>
+
+            <article class="panel span-2">
+                <div class="panel-header"><h2>Software Compliance Overview</h2><span>License position</span></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Product</th><th>Owned</th><th>Assigned</th><th>Status</th></tr></thead>
+                        <tbody>
+                        <?php foreach ($softwareCompliance as $item): ?>
+                            <tr><td><?= htmlspecialchars($item['product']) ?></td><td><?= (int) $item['owned'] ?></td><td><?= (int) $item['assigned'] ?></td><td><span class="badge <?= $item['status'] === 'Over Allocated' ? 'danger' : 'success' ?>"><?= htmlspecialchars($item['status']) ?></span></td></tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+    </main>
 </div>
-
-<div class="main">
-    <h1>Dashboard</h1>
-    <p>IT Asset & Endpoint Management Overview</p>
-
-    <div class="cards">
-        <div class="card">
-            <h3>Total Assets</h3>
-            <p>1,254</p>
-        </div>
-        <div class="card">
-            <h3>Online Endpoints</h3>
-            <p>1,102</p>
-        </div>
-        <div class="card">
-            <h3>Software Licenses</h3>
-            <p>187</p>
-        </div>
-        <div class="card">
-            <h3>Active Contracts</h3>
-            <p>36</p>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>Critical Information</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Item</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Owner</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Software License</td>
-                    <td>Microsoft Visio Plan 2</td>
-                    <td>25 Nov 2026</td>
-                    <td><span class="badge yellow">Expiring Soon</span></td>
-                    <td>IT</td>
-                </tr>
-                <tr>
-                    <td>Copier Machine</td>
-                    <td>Yard 2 - New Building Level 1</td>
-                    <td>Contract Active</td>
-                    <td><span class="badge green">Active</span></td>
-                    <td>Ismail</td>
-                </tr>
-                <tr>
-                    <td>Endpoint</td>
-                    <td>15 Devices Not Seen</td>
-                    <td>Today</td>
-                    <td><span class="badge red">Need Check</span></td>
-                    <td>IT Support</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
+<script src="assets/js/app.js"></script>
 </body>
 </html>
